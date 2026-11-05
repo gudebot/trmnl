@@ -49,14 +49,35 @@ class BundleTests(unittest.TestCase):
 
     def test_committed_example_art_validates_and_preview_is_native(self):
         run = subprocess.run([sys.executable, str(ROOT / "scripts/trmnl_art.py"), "validate",
-                              str(ROOT / "examples/square-art.png"), "--size", "576x576"],
+                              str(ROOT / "examples/region-art.png"), "--size", "800x1190"],
                              text=True, capture_output=True)
         self.assertEqual(run.returncode, 0, run.stderr)
         proof = json.loads(run.stdout)
-        self.assertEqual((proof["width"], proof["height"], proof["bitDepth"]), (576, 576, 4))
-        from PIL import Image
-        with Image.open(ROOT / "examples/region-preview.png") as image:
+        self.assertEqual((proof["width"], proof["height"], proof["bitDepth"]), (800, 1190, 4))
+        run = subprocess.run([sys.executable, str(ROOT / "scripts/trmnl_art.py"), "validate",
+                              str(ROOT / "examples/menu-screen.png"), "--size", "1872x1404"], text=True, capture_output=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        from PIL import Image, ImageChops
+        with Image.open(ROOT / "examples/region-preview.png") as image, Image.open(ROOT / "examples/menu-screen.png") as screen:
             self.assertEqual(image.size, (1872, 1404))
+            preview, frame = image.convert("RGBA"), screen.convert("RGBA")
+        x, y, w, h = 22, 22, 800, 1190
+        outside = [(0, 0, 1872, y), (0, y + h, 1872, 1404), (0, y, x, y + h), (x + w, y, 1872, y + h)]
+        for box in outside:
+            with self.subTest(box=box):
+                self.assertIsNone(ImageChops.difference(preview.crop(box), frame.crop(box)).getbbox())
+        with Image.open(ROOT / "examples/region-art.png") as art:
+            self.assertIsNone(ImageChops.difference(preview.crop((x, y, x + w, y + h)), art.convert("RGBA")).getbbox())
+
+    def test_example_box_matches_the_measured_panel_border(self):
+        from PIL import Image
+        with Image.open(ROOT / "examples/menu-screen.png") as screen:
+            g = screen.convert("L")
+        # 4 px grey border just outside the 800x1190 box at 22,22; white just inside it.
+        for px in ((19, 400), (400, 19), (823, 600), (400, 1213)):
+            self.assertEqual(g.getpixel(px), 204, px)
+        for px in ((22, 400), (400, 22), (821, 600), (400, 1211)):
+            self.assertEqual(g.getpixel(px), 255, px)
 
     def test_procedural_demo_is_real_and_honestly_labeled(self):
         with tempfile.TemporaryDirectory(prefix="trmnl-demo-test-") as temp:
@@ -64,13 +85,15 @@ class BundleTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stderr)
             result = json.loads(run.stdout)
             self.assertFalse(result["aiGenerationServiceCalled"])
-            self.assertFalse(result["liveLayoutReproduced"])
-            self.assertEqual((result["art"]["width"], result["art"]["height"]), (576, 576))
-            for name in ("square-art.png", "region-preview.png"):
+            self.assertFalse(result["deviceChanged"])
+            self.assertEqual((result["art"]["width"], result["art"]["height"]), (800, 1190))
+            self.assertEqual(result["box"], [22, 22, 800, 1190])
+            for name in ("region-art.png", "region-preview.png"):
                 self.assertGreater((Path(temp) / name).stat().st_size, 0)
+                with self.subTest(name=name):
+                    self.assertEqual((Path(temp) / name).read_bytes(), (ROOT / "examples" / name).read_bytes())
             again = subprocess.run([sys.executable, str(ROOT / "scripts/make_examples.py"), "--output-dir", temp], text=True, capture_output=True)
             self.assertEqual(again.returncode, 2)
-
 
 if __name__ == "__main__":
     unittest.main()

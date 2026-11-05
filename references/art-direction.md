@@ -2,7 +2,7 @@
 
 ## Start with the space, not a whole-screen mockup
 
-An image for a reserved square should be **only that square's illustration**. Its surrounding quote, dinner plan, title, clock and other widgets belong to the existing layout. Put none of them in the picture. The art can be placed top-right, top-left or elsewhere without regenerating the rest of the screen.
+An image for a reserved picture area should be **only that area's illustration**. Its surrounding quote, dinner plan, title, clock and other widgets belong to the existing layout. Put none of them in the picture. The art can sit in a left panel, a top-right square or elsewhere without regenerating the rest of the screen. A tall panel (such as 800×1190 on the example menu screen) wants a tall composition; a wide picture would be letterboxed in it.
 
 Record the actual intended width/height and aspect ratio before drawing. Generate near that ratio when a provider restricts sizes, then contain-fit without losing the subject. A square source pasted into a rectangular slot is not proof that the slot itself is square. Do not silently crop a face/character to make a mismatched brief fit.
 
@@ -21,7 +21,7 @@ Record the actual intended width/height and aspect ratio before drawing. Generat
 
 ## Example region brief
 
-> A standalone botanical illustration for a measured square art region. One graceful plant with broad leaves, subtle 16-gray value separation, a white background, clear medium-weight lines, restrained shading and generous breathing room. No surrounding screen, quote, weekly dinners, clock, title, labels, frame or mockup. Preserve the whole plant when resized.
+> A standalone botanical illustration for a measured 800×1190 portrait picture panel. One graceful plant with broad leaves, subtle 16-gray value separation, a white background, clear medium-weight lines, restrained shading and generous breathing room. No surrounding screen, quote, weekly dinners, clock, title, labels, frame or mockup. Preserve the whole plant when resized.
 
 Use the user's creative subject, not the example plant by default. Do not silently replace requested generated artwork with a conversion of an old repo image or a procedural demo.
 

@@ -7,7 +7,7 @@ The root [SKILL.md](SKILL.md) is the agent entry point. Supporting material is i
 ## What it does
 
 - Guides original image creation with the agent's already approved image generator or appropriate locally executed art code.
-- Requires a region's explicit width/height; a top-right square is an art tile, **not** a replacement screen containing your other widgets.
+- Requires a region's explicit width/height; a picture panel is an art tile, **not** a replacement screen containing your other widgets.
 - Prepares exact-size, 16-gray, **true 4-bit grayscale PNG** output; full-screen TRMNL X is **1872×1404**, and exports must be **smaller than 750,000 bytes**.[1][2]
 - Preserves aspect ratio, offers explicit contain/crop and optional Floyd–Steinberg dithering, composites transparency on white and strips metadata.
 - Independently checks PNG bytes, CRCs, dimensions, filters, bounded decompression and the size cap.
@@ -23,15 +23,15 @@ An AI-art request also needs an available, approved image-generation tool. A ski
 
 ## Quick start: artwork for one region
 
-First measure or explicitly choose the art tile's native pixel dimensions. **576×576 below is illustrative, not a hardcoded measurement of anyone's current device.** See [targets and measurement](references/targets.md).
+First measure or explicitly choose the art tile's native pixel dimensions. **800×1190 below is the picture panel measured on [the example menu screen](examples/menu-screen.png) with a one-line quote.** Remeasure for your own layout; see [targets and measurement](references/targets.md).
 
 ```sh
 # Prints a prompt; use the agent's approved image generator to create out/source.png.
-python scripts/trmnl_art.py prompt --brief "a calm autumn illustration with a clear botanical silhouette" --size 576x576
+python scripts/trmnl_art.py prompt --brief "a calm autumn illustration with a clear botanical silhouette" --size 800x1190
 
 # Or prepare one of the existing example images. The original is never overwritten.
-python scripts/trmnl_art.py prepare Cinnamoroll_Halloween.png out/picture.png --size 576x576
-python scripts/trmnl_art.py validate out/picture.png --size 576x576
+python scripts/trmnl_art.py prepare Cinnamoroll_Halloween.png out/picture.png --size 800x1190
+python scripts/trmnl_art.py validate out/picture.png --size 800x1190
 ```
 
 `prepare` prints JSON with the measured output dimensions, bit depth, bytes, hash and used gray count. The PNG has at most 16 possible grays; an illustration need not use all 16.
@@ -40,10 +40,10 @@ Options:
 
 ```sh
 # Explicit crop, not stretching; inspect subject edges afterward.
-python scripts/trmnl_art.py prepare out/source.png out/crop.png --size 576x576 --fit cover
+python scripts/trmnl_art.py prepare out/source.png out/crop.png --size 800x1190 --fit cover
 
 # Optional texture treatment; default is no dithering.
-python scripts/trmnl_art.py prepare out/source.png out/tonal.png --size 576x576 --dither floyd-steinberg --contrast 1.1 --margin 0.06
+python scripts/trmnl_art.py prepare out/source.png out/tonal.png --size 800x1190 --dither floyd-steinberg --contrast 1.1 --margin 0.06
 
 # Only when a full-screen illustration is genuinely wanted; not your menu layout.
 python scripts/trmnl_art.py prepare out/source.png out/full-art.png --full-screen
@@ -56,16 +56,16 @@ Outputs are exclusively created: choose a new filename rather than overwrite a p
 Use an approved local reference frame and its verified art box:
 
 ```sh
-python scripts/trmnl_art.py preview out/reference.png out/picture.png out/placement.png --box 1200,80,576,576
+python scripts/trmnl_art.py preview examples/menu-screen.png out/picture.png out/placement.png --box 22,22,800,1190
 ```
 
-The box is **X,Y,WIDTH,HEIGHT in reference-image pixels**. The example box is illustrative only. Asset dimensions must match exactly; references and artwork must be static local PNG/JPEG/WebP files. Pixels outside the box are copied unchanged, including color if present. The preview is an ordinary RGBA PNG for inspection, **not** a validated device-ready render or a live screen update.
+The box is **X,Y,WIDTH,HEIGHT in reference-image pixels**. `22,22,800,1190` is the measured picture panel of the example screen; use your own frame and box for other layouts. Asset dimensions must match exactly; references and artwork must be static local PNG/JPEG/WebP files. Pixels outside the box are copied unchanged, including color if present. The preview is an ordinary RGBA PNG for inspection, **not** a validated device-ready render or a live screen update.
 
 A compatible art asset does not guarantee the final plugin composite fits the firmware's full-render limit. Local preview also does not establish how the physical panel looks.
 
 ## Examples and testing
 
-See [examples](examples/README.md) for explicitly synthetic, procedurally generated botanical art and a top-right placement demonstration. They contain no live quote, meal data, account ID or device screenshot.
+See [examples](examples/README.md): a real menu screen (published with its owner's permission; it shows that day's quote and dinners), procedurally drawn botanical art sized for its picture panel, and a placement preview on that screen. They contain no account ID, device key or plugin markup.
 
 ```sh
 python scripts/make_examples.py --output-dir out/examples
