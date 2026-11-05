@@ -9,7 +9,7 @@ compatibility: "Python 3.10+ and Pillow 10+. An already approved image-generatio
 
 Create **artwork**, not a replacement dashboard. Support one reserved picture region (for example the picture panel beside a quote and weekly dinners) or an explicitly requested whole-screen illustration. This skill does not install tools, provide an image-generation service, upload anything, or activate a device.
 
-Local tools: [converter / validator / prompt / preview](scripts/trmnl_art.py) and [clearly labeled procedural example generator](scripts/make_examples.py).
+Local tools: [converter / validator / prompt / preview](scripts/trmnl_art.py) and [example builder](scripts/make_examples.py) (prepares existing repository artwork for the example screen).
 
 ## 1. Establish the art region before generating
 
@@ -29,9 +29,13 @@ A prompt helper is available:
 python scripts/trmnl_art.py prompt --brief "a friendly autumn botanical illustration" --size 800x1190
 ```
 
-**800×1190 is the picture panel measured on [the example menu screen](examples/menu-screen.png) with a one-line quote. It is not a preset for other layouts; remeasure.** The command prints a prompt, not an image. Use an **already available, approved** image generator with the actual brief and target ratio, or write and execute local Pillow/vector art code when appropriate. If the generator cannot use the exact dimensions, choose its closest supported aspect ratio and prepare the resulting file below. Do not claim creation succeeded until an image file really exists.
+**800×1190 is the picture panel measured on [the example menu screen](examples/menu-screen.png) with a one-line quote. It is not a preset for other layouts; remeasure.** The command prints a prompt, not an image.
 
-If there is no suitable tool or spending/upload approval, report that specific blocker. Never install tools, spend credits, send private reference images, invent a generated result, or substitute a test pattern for requested AI artwork. Procedural art is valid only when honestly identified and suitable for the brief.
+**Preferred generator: OpenAI's image generation, with GPT-6.1 Sol (`gpt-6.1-sol`) as the model that writes and refines the prompt and calls the image tool.** GPT-6.1 Sol outputs text, not pixels: in OpenAI's Responses API it drives the hosted `image_generation` tool, and a GPT Image model renders the picture. Record both the orchestrating model and the image model that rendered it. Text-only models, including Claude, cannot produce images; a drawing coded by such a model is procedural art, not generated art, and must not be substituted for a requested generated image. Use another generator only when the user chooses it.
+
+Use the generator through an **already available, approved** route with the actual brief and target ratio. If the generator cannot use the exact dimensions, choose its closest supported aspect ratio (2:3 portrait for an 800×1190 panel) and prepare the resulting file below. Do not claim creation succeeded until an image file really exists.
+
+If there is no suitable tool or spending/upload approval, report that specific blocker. Never install tools, spend credits, send private reference images, invent a generated result, or substitute a test pattern or code-drawn picture for requested AI artwork.
 
 ## 3. Prepare and independently validate
 

@@ -25,6 +25,8 @@ Record the actual intended width/height and aspect ratio before drawing. Generat
 
 Use the user's creative subject, not the example plant by default. Do not silently replace requested generated artwork with a conversion of an old repo image or a procedural demo.
 
+For a character scene in a tall panel, stack the action vertically (characters in front, table or setting behind, decorations above) instead of a wide banquet composition that will be letterboxed. Ask the generator for bold outlines and flat, well-separated tones; very light pastels (pale blue, cream) collapse toward white in 16 grays.
+
 ## Honest generation evidence
 
 A returned prompt is not an image. A successful conversion proves preparation of a real input, not that a generative service was called. A local procedural drawing is an image but must not be described as an AI-service result. Record the source path/tool, the actual produced file, target dimensions and validator result; distinguish these from a local composition and a physical device observation. No invented images, API responses or claimed uploads.

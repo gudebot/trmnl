@@ -68,6 +68,10 @@ class BundleTests(unittest.TestCase):
                 self.assertIsNone(ImageChops.difference(preview.crop(box), frame.crop(box)).getbbox())
         with Image.open(ROOT / "examples/region-art.png") as art:
             self.assertIsNone(ImageChops.difference(preview.crop((x, y, x + w, y + h)), art.convert("RGBA")).getbbox())
+        # The device showed this same Gudetama picture, so the preview reproduces the real frame:
+        # only the panel's clipped rounded corners (and a few resampling pixels) may differ.
+        changed = sum(1 for p in ImageChops.difference(preview.convert("L"), frame.convert("L")).getdata() if p)
+        self.assertLess(changed, 400)
 
     def test_example_box_matches_the_measured_panel_border(self):
         from PIL import Image
@@ -79,8 +83,8 @@ class BundleTests(unittest.TestCase):
         for px in ((22, 400), (400, 22), (821, 600), (400, 1211)):
             self.assertEqual(g.getpixel(px), 255, px)
 
-    def test_procedural_demo_is_real_and_honestly_labeled(self):
-        with tempfile.TemporaryDirectory(prefix="trmnl-demo-test-") as temp:
+    def test_example_builder_reproduces_committed_examples(self):
+        with tempfile.TemporaryDirectory(prefix="trmnl-examples-test-") as temp:
             run = subprocess.run([sys.executable, str(ROOT / "scripts/make_examples.py"), "--output-dir", temp], text=True, capture_output=True)
             self.assertEqual(run.returncode, 0, run.stderr)
             result = json.loads(run.stdout)
@@ -88,6 +92,7 @@ class BundleTests(unittest.TestCase):
             self.assertFalse(result["deviceChanged"])
             self.assertEqual((result["art"]["width"], result["art"]["height"]), (800, 1190))
             self.assertEqual(result["box"], [22, 22, 800, 1190])
+            self.assertEqual(result["source"], "gudetama-halloween-color-gray.png")
             for name in ("region-art.png", "region-preview.png"):
                 self.assertGreater((Path(temp) / name).stat().st_size, 0)
                 with self.subTest(name=name):

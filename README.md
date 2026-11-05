@@ -19,7 +19,7 @@ It does **not** add an image-generation service, buy image credits, upload artwo
 
 Python 3.10+ and Pillow 10+. Locally exercised with Python 3.14.7 and Pillow 12.3.0; the minimum supported versions were not separately tested. Dependency requirements are declared in [requirements.txt](requirements.txt); use an existing suitable environment or obtain approval before any installation. ImageMagick is not needed. Validation and prompt construction themselves use only the Python standard library; preparation and placement use Pillow.
 
-An AI-art request also needs an available, approved image-generation tool. A skill file or prompt alone does not grant that capability. The bundled example generator creates **procedural botanical art**, not an AI-service result.
+An AI-art request also needs an available, approved image-generation tool. A skill file or prompt alone does not grant that capability. **Preferred: OpenAI's image generation with GPT-6.1 Sol (`gpt-6.1-sol`)** writing and refining the prompt; see [SKILL.md](SKILL.md#2-actually-create-the-artwork). The bundled example script only converts existing repository artwork; it does not generate anything.
 
 ## Quick start: artwork for one region
 
@@ -65,7 +65,7 @@ A compatible art asset does not guarantee the final plugin composite fits the fi
 
 ## Examples and testing
 
-See [examples](examples/README.md): a real menu screen (published with its owner's permission; it shows that day's quote and dinners), procedurally drawn botanical art sized for its picture panel, and a placement preview on that screen. They contain no account ID, device key or plugin markup.
+See [examples](examples/README.md): a real menu screen (published with its owner's permission; it shows that day's quote and dinners), the repository's Gudetama artwork prepared for its picture panel, and a placement preview that reproduces that screen. They contain no account ID, device key or plugin markup.
 
 ```sh
 python scripts/make_examples.py --output-dir out/examples
