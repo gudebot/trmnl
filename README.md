@@ -26,8 +26,9 @@ An AI-art request also needs an available, approved image-generation tool. A ski
 First measure or explicitly choose the art tile's native pixel dimensions. **800×1190 below is the picture panel measured on [the example menu screen](examples/menu-screen.png) with a one-line quote.** Remeasure for your own layout; see [targets and measurement](references/targets.md).
 
 ```sh
-# Prints a prompt; use the agent's approved image generator to create out/source.png.
-python scripts/trmnl_art.py prompt --brief "a calm autumn illustration with a clear botanical silhouette" --size 800x1190
+# Prints a prompt in the house style (bold outlines, flat shading, white background) for the panel's shape;
+# use the agent's approved image generator (preferred: GPT-6.1 Sol + OpenAI image generation) to create out/source.png.
+python scripts/trmnl_art.py prompt --brief "two cute cartoon characters sharing a holiday feast" --size 800x1190
 
 # Or prepare one of the existing example images. The original is never overwritten.
 python scripts/trmnl_art.py prepare Cinnamoroll_Halloween.png out/picture.png --size 800x1190
@@ -57,6 +58,9 @@ Use an approved local reference frame and its verified art box:
 
 ```sh
 python scripts/trmnl_art.py preview examples/menu-screen.png out/picture.png out/placement.png --box 22,22,800,1190
+
+# Prints a PASS/REDO checklist for a vision model reviewing the prepared 16-gray file (no model is called).
+python scripts/trmnl_art.py review-prompt --brief "two cute cartoon characters sharing a holiday feast" --size 800x1190
 ```
 
 The box is **X,Y,WIDTH,HEIGHT in reference-image pixels**. `22,22,800,1190` is the measured picture panel of the example screen; use your own frame and box for other layouts. Asset dimensions must match exactly; references and artwork must be static local PNG/JPEG/WebP files. Pixels outside the box are copied unchanged, including color if present. The preview is an ordinary RGBA PNG for inspection, **not** a validated device-ready render or a live screen update.
@@ -72,7 +76,7 @@ python scripts/make_examples.py --output-dir out/examples
 python -m unittest discover -s tests -v
 ```
 
-Tests cover native/full-screen and region sizes, exact gray-4 bytes decoded independently by Pillow, all five PNG filters, CRC/corruption/bounds, alpha and EXIF handling, contain/crop, dithering, output preservation, oversize rejection, prompt semantics and pixel-for-pixel preservation outside the art box. A real existing repository image is also converted without modifying its original.
+Tests cover native/full-screen and region sizes, exact gray-4 bytes decoded independently by Pillow, all five PNG filters, CRC/corruption/bounds, alpha and EXIF handling, contain/crop, dithering, output preservation, oversize rejection, prompt and review-checklist semantics and pixel-for-pixel preservation outside the art box. A real existing repository image is also converted without modifying its original.
 
 ## Use from an agent
 

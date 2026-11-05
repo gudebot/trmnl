@@ -21,19 +21,21 @@ Local tools: [converter / validator / prompt / preview](scripts/trmnl_art.py) an
 
 ## 2. Actually create the artwork
 
-Read [art direction](references/art-direction.md). Compose for the requested aspect ratio, bold enough for e-ink, with separated grays and breathing room around the subject.
+Read [art direction](references/art-direction.md). The house style is a **cute cartoon illustration: bold clean black outlines, flat simple shading, strong light/dark contrast, a plain white background**, composed for the target's shape (a tall panel gets a tall, stacked scene). This style was chosen after a real test on the device's 800×1190 panel and reads well in 16 grays.
 
-A prompt helper is available:
+The prompt helper writes that style for the target's shape:
 
 ```sh
-python scripts/trmnl_art.py prompt --brief "a friendly autumn botanical illustration" --size 800x1190
+python scripts/trmnl_art.py prompt --brief "two cute cartoon characters sharing a holiday feast" --size 800x1190
 ```
 
-**800×1190 is the picture panel measured on [the example menu screen](examples/menu-screen.png) with a one-line quote. It is not a preset for other layouts; remeasure.** The command prints a prompt, not an image.
+**800×1190 is the picture panel measured on [the example menu screen](examples/menu-screen.png) with a one-line quote. It is not a preset for other layouts; remeasure.** The command prints a prompt, not an image. It names the image tool's closest shape (`portrait` 2:3 for this panel), so the subject survives the contain-fit.
 
 **Preferred generator: OpenAI's image generation, with GPT-6.1 Sol (`gpt-6.1-sol`) as the model that writes and refines the prompt and calls the image tool.** GPT-6.1 Sol outputs text, not pixels: in OpenAI's Responses API it drives the hosted `image_generation` tool, and a GPT Image model renders the picture. Record both the orchestrating model and the image model that rendered it. Text-only models, including Claude, cannot produce images; a drawing coded by such a model is procedural art, not generated art, and must not be substituted for a requested generated image. Use another generator only when the user chooses it.
 
 Use the generator through an **already available, approved** route with the actual brief and target ratio. If the generator cannot use the exact dimensions, choose its closest supported aspect ratio (2:3 portrait for an 800×1190 panel) and prepare the resulting file below. Do not claim creation succeeded until an image file really exists.
+
+Workflow that produced an accepted image: (1) a one-off agent on GPT-6.1 Sol receives the subject and the helper's style rules, writes the final prompt and calls the image tool once with `portrait`; (2) prepare the result (section 3); (3) a vision-capable model reviews the **prepared 16-gray file**, not the colour original, with the checklist from `python scripts/trmnl_art.py review-prompt --brief "..." --size 800x1190`, and answers PASS or REDO; (4) show the user the original, the 16-gray file and a placement preview. A REDO, or a user's correction, goes back to step 1 with the reason. Cap the attempts (two generations) and report what each one cost.
 
 If there is no suitable tool or spending/upload approval, report that specific blocker. Never install tools, spend credits, send private reference images, invent a generated result, or substitute a test pattern or code-drawn picture for requested AI artwork.
 

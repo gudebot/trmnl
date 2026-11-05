@@ -268,21 +268,58 @@ def preview(frame_path: Path, art_path: Path, output: Path, box: tuple[int, int,
             "box": list(box), "outsideBox": "decoded pixels unchanged", "width": frame.width, "height": frame.height}
 
 
+def generator_aspect(size: tuple[int, int]) -> str:
+    """The image tool's closest standard shape: portrait (2:3), landscape (3:2) or square."""
+    width, height = size
+    if height >= width * 1.2:
+        return "portrait"
+    if width >= height * 1.2:
+        return "landscape"
+    return "square"
+
+
+COMPOSITION = {
+    "portrait": "A tall, vertical composition: the main subjects large and in front, the setting behind and "
+                "below them, any decorations above. Do not make a wide scene; it would be letterboxed.",
+    "landscape": "A wide composition with the main subjects large and clearly separated across the frame.",
+    "square": "A centred composition with the main subjects large in the middle.",
+}
+
+
 def image_prompt(brief: str, size: tuple[int, int], full_screen: bool = False) -> str:
+    """Prompt in the style that reads well on a 16-gray panel (proven with GPT-6.1 Sol + GPT Image)."""
     check_size(size)
     if not brief.strip() or len(brief) > 10_000:
         raise ArtError("Provide a non-empty creative brief under 10,000 characters.")
     kind = "full-screen artwork" if full_screen else "standalone artwork for one reserved picture region"
-    return (f"Create {kind}, targeting {size[0]}x{size[1]} pixels.\n"
+    shape = generator_aspect(size)
+    return (f"Create {kind}, targeting {size[0]}x{size[1]} pixels "
+            f"(ask the image tool for {shape}{' 2:3' if shape == 'portrait' else ' 3:2' if shape == 'landscape' else ''}).\n"
             f"Creative brief: {brief.strip()}\n"
-            "Compose for the target aspect ratio. If the image tool cannot use these exact dimensions, "
-            "choose its nearest supported aspect ratio and preserve the subject for a later contain-fit.\n"
-            "Design for a 16-gray e-ink display: clear silhouettes, separated gray values, restrained texture, "
-            "readable medium/bold lines, a light background and breathing room around the subject. "
-            "Do not rely on color differences, hairlines, tiny text or subtle gradients.\n"
-            "Output the illustration only: no quote, dinner list, date, labels, UI, surrounding screen, "
-            "device mockup or decorative border. Other content is owned by the existing layout.\n"
+            f"{COMPOSITION[shape]} Leave white space around the edges; nothing important touches them.\n"
+            "Style: cute and friendly; named characters stay faithful to their official look and are instantly "
+            "recognizable. Bold, clean black outlines of consistent weight, flat simple shading, strong light/dark "
+            "contrast, broad readable shapes and a plain white background.\n"
+            "Design for a 16-gray e-ink display: separate shapes by outline and brightness, never by colour alone. "
+            "No very pale pastel areas next to white, no gradients, hairlines, fine texture or photorealism.\n"
+            "Output the illustration only: no text, letters, logos, watermarks, quote, dinner list, date, labels, UI, "
+            "surrounding screen, device mockup or border. Other content is owned by the existing layout.\n"
             "After image generation, run prepare and validate; a prompt is not an image or proof of generation.\n")
+
+
+def review_prompt(brief: str, size: tuple[int, int]) -> str:
+    """Checklist for a vision-capable model reviewing the prepared 16-gray file (not the colour original)."""
+    check_size(size)
+    if not brief.strip() or len(brief) > 10_000:
+        raise ArtError("Provide a non-empty creative brief under 10,000 characters.")
+    return (f"Review the attached picture. It is the final 16-gray e-ink version, {size[0]}x{size[1]}, "
+            f"that will fill a picture region on a black-and-white e-ink screen. It was meant to show: {brief.strip()}\n"
+            "Do not call any tools. Reply with exactly these lines, each short and concrete:\n"
+            "SUBJECT: is every requested subject or character clearly recognizable? What looks off, if anything?\n"
+            "SCENE: does the scene match the brief?\n"
+            "E-INK: do the grays separate well; is anything washed out, too dark, muddy or cut off at the edges?\n"
+            "TEXT: any letters, logos, watermarks or borders? (yes/no and where)\n"
+            "VERDICT: PASS or REDO, with one reason\n")
 
 
 def main(argv=None) -> int:
@@ -313,10 +350,15 @@ def main(argv=None) -> int:
     prompt_target = prompt.add_mutually_exclusive_group(required=True)
     prompt_target.add_argument("--size")
     prompt_target.add_argument("--full-screen", action="store_true")
+    review = sub.add_parser("review-prompt", help="Build a review checklist for a vision model; NOT a model call")
+    review.add_argument("--brief", required=True)
+    review_target = review.add_mutually_exclusive_group(required=True)
+    review_target.add_argument("--size")
+    review_target.add_argument("--full-screen", action="store_true")
     args = parser.parse_args(argv)
     try:
         size = (WIDTH, HEIGHT)
-        if args.command in {"prepare", "prompt"}:
+        if args.command in {"prepare", "prompt", "review-prompt"}:
             size = (WIDTH, HEIGHT) if args.full_screen else size_value(args.size)
         if args.command == "prepare":
             result = prepare(args.source, args.output, size, fit=args.fit, dither=args.dither,
@@ -329,6 +371,9 @@ def main(argv=None) -> int:
                 raise ArtError("Box must be X,Y,WIDTH,HEIGHT with non-negative origin and positive dimensions.")
             values = list(map(int, args.box.split(",")))
             result = preview(args.frame, args.art, args.output, (values[0], values[1], values[2], values[3]))
+        elif args.command == "review-prompt":
+            print(review_prompt(args.brief, size))
+            return 0
         else:
             print(image_prompt(args.brief, size, args.full_screen))
             return 0

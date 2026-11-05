@@ -70,7 +70,8 @@ class BundleTests(unittest.TestCase):
             self.assertIsNone(ImageChops.difference(preview.crop((x, y, x + w, y + h)), art.convert("RGBA")).getbbox())
         # The device showed this same Gudetama picture, so the preview reproduces the real frame:
         # only the panel's clipped rounded corners (and a few resampling pixels) may differ.
-        changed = sum(1 for p in ImageChops.difference(preview.convert("L"), frame.convert("L")).getdata() if p)
+        diff = ImageChops.difference(preview.convert("L"), frame.convert("L"))
+        changed = diff.width * diff.height - diff.histogram()[0]
         self.assertLess(changed, 400)
 
     def test_example_box_matches_the_measured_panel_border(self):

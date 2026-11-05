@@ -258,10 +258,32 @@ class ArtTests(unittest.TestCase):
         prompt = art.image_prompt("a small botanical illustration", (576, 576))
         self.assertIn("576x576", prompt)
         self.assertIn("one reserved picture region", prompt)
-        self.assertIn("no quote, dinner list", prompt)
+        self.assertIn("no text, letters, logos, watermarks, quote, dinner list", prompt)
         self.assertIn("a prompt is not an image", prompt)
         with self.assertRaises(art.ArtError):
             art.image_prompt("   ", (80, 80))
+
+    def test_prompt_matches_the_target_shape_and_e_ink_style(self):
+        tall = art.image_prompt("two characters at a feast", (800, 1190))
+        self.assertIn("portrait 2:3", tall)
+        self.assertIn("tall, vertical composition", tall)
+        for phrase in ("Bold, clean black outlines", "flat simple shading", "plain white background",
+                       "No very pale pastel", "no text, letters, logos, watermarks"):
+            self.assertIn(phrase, tall)
+        self.assertIn("landscape 3:2", art.image_prompt("a skyline", (1200, 600)))
+        self.assertIn("ask the image tool for square", art.image_prompt("a plant", (576, 576)))
+        self.assertEqual(art.generator_aspect((1872, 1404)), "landscape")
+
+    def test_review_prompt_is_a_checklist_not_a_model_call(self):
+        review = art.review_prompt("two characters at a feast", (800, 1190))
+        for line in ("800x1190", "Do not call any tools", "SUBJECT:", "SCENE:", "E-INK:", "TEXT:", "VERDICT: PASS or REDO"):
+            self.assertIn(line, review)
+        run = subprocess.run([sys.executable, str(ROOT / "scripts/trmnl_art.py"), "review-prompt",
+                              "--brief", "a plant", "--size", "800x1190"], capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        self.assertIn("VERDICT", run.stdout)
+        with self.assertRaises(art.ArtError):
+            art.review_prompt(" ", (80, 80))
 
     def test_cli_requires_explicit_target(self):
         run = subprocess.run([sys.executable, str(ROOT / "scripts/trmnl_art.py"), "prepare",

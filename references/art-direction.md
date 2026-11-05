@@ -19,13 +19,25 @@ Record the actual intended width/height and aspect ratio before drawing. Generat
 
 `none` is usually the cleaner starting point for line art, cartoon illustrations and flat shapes. Floyd–Steinberg can represent tonal detail with spatial texture, but may make a small picture noisy or larger on disk. Compare the actual prepared files at intended display size. Do not claim one mode is universally better; export both to distinct paths when the choice matters.
 
+## House style
+
+The style that tested well on the real 800×1190 panel (two cartoon characters at a holiday feast, made by GPT Image under GPT-6.1 Sol, then prepared with `--dither none`) and that the screen's owner chose:
+
+- **Cute, friendly cartoon illustration.** Named characters stay faithful to their official look and are instantly recognizable.
+- **Bold, clean black outlines** of consistent weight around every shape; **flat, simple shading** (two or three tones per shape); **strong light/dark contrast**; a **plain white background**.
+- **Composition follows the panel.** In a tall panel, stack the scene: characters large in front, the table or setting behind and below them, a few decorations (leaves, garland) above. A wide banquet scene would be letterboxed.
+- **Breathing room.** Ears, hats and plates stay clear of the edges.
+- **Nothing written.** No text, logos, watermarks or borders.
+
+What to avoid: photorealism, painterly gradients, fine texture or hatching, hairlines, and very pale pastels (pale blue, cream, light pink) next to white. They wash out or turn muddy in 16 grays. A pale tablecloth or plate is acceptable as long as an outline separates it.
+
+`python scripts/trmnl_art.py prompt` writes these rules for the target's shape; `review-prompt` gives the matching checklist for reviewing the prepared file.
+
 ## Example region brief
 
-> A standalone botanical illustration for a measured 800×1190 portrait picture panel. One graceful plant with broad leaves, subtle 16-gray value separation, a white background, clear medium-weight lines, restrained shading and generous breathing room. No surrounding screen, quote, weekly dinners, clock, title, labels, frame or mockup. Preserve the whole plant when resized.
+> Two cute cartoon characters sharing a cozy holiday feast, for a measured 800×1190 portrait picture panel (ask for portrait 2:3). A tall, vertical composition: the characters large and in front, the table with a roast, a pie and corn behind and below them, a few autumn leaves above. Bold clean black outlines, flat simple shading, strong light/dark contrast, a plain white background, white space around the edges. No text, logos, borders, surrounding screen, quote, weekly dinners or mockup.
 
-Use the user's creative subject, not the example plant by default. Do not silently replace requested generated artwork with a conversion of an old repo image or a procedural demo.
-
-For a character scene in a tall panel, stack the action vertically (characters in front, table or setting behind, decorations above) instead of a wide banquet composition that will be letterboxed. Ask the generator for bold outlines and flat, well-separated tones; very light pastels (pale blue, cream) collapse toward white in 16 grays.
+Use the user's creative subject, not this example by default. Do not silently replace requested generated artwork with a conversion of an old repo image or a procedural demo.
 
 ## Honest generation evidence
 
