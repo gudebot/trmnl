@@ -2,9 +2,7 @@
 
 - `menu-screen.png`: a real **1872×1404** TRMNL X frame, exactly as the device showed it on 2026-11-04 and read from the device's current-image endpoint (no playlist change). Left: a picture panel with the day's quote under it. Right: the week's dinners. Bottom: the "On the Menu" bar. It is published with the screen owner's permission as a reference layout. It is a 4-bit grayscale PNG with no metadata chunks.
 - `region-art.png`: the repository's own `gudetama-halloween-color-gray.png`, prepared by `trmnl_art.py prepare` to exactly **800×1190**, 16-gray/4-bit grayscale (contain fit, no dithering). No image service was called.
-- `region-preview.png`: `region-art.png` placed into the picture panel of `menu-screen.png` at **22,22** (box `22,22,800,1190`). Every pixel outside the box is identical to `menu-screen.png`. It is an ordinary RGBA PNG for inspection, **not** a device-ready render or a live screen update.
-
-The device was showing this same Gudetama picture that day, so the preview reproduces the real screen: only 187 of 2.6 million pixels differ, mostly at the panel's four rounded corners, which the device clips. That agreement is the check that the measured box is right.
+There is no separate preview image. The device was showing this same Gudetama picture that day, so placing `region-art.png` into the panel at **22,22** (box `22,22,800,1190`) reproduces `menu-screen.png`: only 187 of 2.6 million pixels differ, mostly at the panel's four rounded corners, which the device clips. `menu-screen.png` is therefore both the layout reference and what the placed art looks like, and that agreement is the check that the measured box is right (the tests rebuild the placement and compare it).
 
 ## How the box was measured
 
@@ -12,7 +10,7 @@ On `menu-screen.png` the panel's grey border is 4 native pixels (the layout's 2 
 
 The Gudetama picture is a wide scene, so it shows letterboxed (white above and below) in the tall panel. New art drawn at the panel's portrait ratio (about 2:3) fills it.
 
-Regenerate into a new, ignored output directory:
+Regenerate into a new, ignored output directory (this also writes `region-preview.png` there, a local placement for inspection that is not committed):
 
 ```sh
 python scripts/make_examples.py --output-dir out/examples

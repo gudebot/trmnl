@@ -69,7 +69,7 @@ A compatible art asset does not guarantee the final plugin composite fits the fi
 
 ## Examples and testing
 
-See [examples](examples/README.md): a real menu screen (published with its owner's permission; it shows that day's quote and dinners), the repository's Gudetama artwork prepared for its picture panel, and a placement preview that reproduces that screen. They contain no account ID, device key or plugin markup.
+See [examples](examples/README.md): a real menu screen (published with its owner's permission; it shows that day's quote and dinners), and the repository's Gudetama artwork prepared for its picture panel. The screen was showing that same picture, so it doubles as the placement preview. They contain no account ID, device key or plugin markup.
 
 ```sh
 python scripts/make_examples.py --output-dir out/examples

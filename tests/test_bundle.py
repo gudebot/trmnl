@@ -58,17 +58,25 @@ class BundleTests(unittest.TestCase):
                               str(ROOT / "examples/menu-screen.png"), "--size", "1872x1404"], text=True, capture_output=True)
         self.assertEqual(run.returncode, 0, run.stderr)
         from PIL import Image, ImageChops
-        with Image.open(ROOT / "examples/region-preview.png") as image, Image.open(ROOT / "examples/menu-screen.png") as screen:
-            self.assertEqual(image.size, (1872, 1404))
-            preview, frame = image.convert("RGBA"), screen.convert("RGBA")
+        # No preview is committed: menu-screen.png is the single example screen. Build the placement
+        # here from the committed art and check it against that screen.
         x, y, w, h = 22, 22, 800, 1190
+        with tempfile.TemporaryDirectory(prefix="trmnl-preview-test-") as temp:
+            out = Path(temp) / "preview.png"
+            run = subprocess.run([sys.executable, str(ROOT / "scripts/trmnl_art.py"), "preview",
+                                  str(ROOT / "examples/menu-screen.png"), str(ROOT / "examples/region-art.png"),
+                                  str(out), "--box", f"{x},{y},{w},{h}"], text=True, capture_output=True)
+            self.assertEqual(run.returncode, 0, run.stderr)
+            with Image.open(out) as image, Image.open(ROOT / "examples/menu-screen.png") as screen:
+                self.assertEqual(image.size, (1872, 1404))
+                preview, frame = image.convert("RGBA"), screen.convert("RGBA")
         outside = [(0, 0, 1872, y), (0, y + h, 1872, 1404), (0, y, x, y + h), (x + w, y, 1872, y + h)]
         for box in outside:
             with self.subTest(box=box):
                 self.assertIsNone(ImageChops.difference(preview.crop(box), frame.crop(box)).getbbox())
         with Image.open(ROOT / "examples/region-art.png") as art:
             self.assertIsNone(ImageChops.difference(preview.crop((x, y, x + w, y + h)), art.convert("RGBA")).getbbox())
-        # The device showed this same Gudetama picture, so the preview reproduces the real frame:
+        # The device showed this same Gudetama picture, so the placement reproduces the real frame:
         # only the panel's clipped rounded corners (and a few resampling pixels) may differ.
         diff = ImageChops.difference(preview.convert("L"), frame.convert("L"))
         changed = diff.width * diff.height - diff.histogram()[0]
@@ -94,10 +102,9 @@ class BundleTests(unittest.TestCase):
             self.assertEqual((result["art"]["width"], result["art"]["height"]), (800, 1190))
             self.assertEqual(result["box"], [22, 22, 800, 1190])
             self.assertEqual(result["source"], "gudetama-halloween-color-gray.png")
-            for name in ("region-art.png", "region-preview.png"):
-                self.assertGreater((Path(temp) / name).stat().st_size, 0)
-                with self.subTest(name=name):
-                    self.assertEqual((Path(temp) / name).read_bytes(), (ROOT / "examples" / name).read_bytes())
+            self.assertEqual((Path(temp) / "region-art.png").read_bytes(), (ROOT / "examples/region-art.png").read_bytes())
+            self.assertGreater((Path(temp) / "region-preview.png").stat().st_size, 0)
+            self.assertFalse((ROOT / "examples/region-preview.png").exists(), "the preview is generated, not committed")
             again = subprocess.run([sys.executable, str(ROOT / "scripts/make_examples.py"), "--output-dir", temp], text=True, capture_output=True)
             self.assertEqual(again.returncode, 2)
 
