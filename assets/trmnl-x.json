@@ -1,0 +1,17 @@
+{
+  "name": "trmnl-x-landscape",
+  "model": "v2",
+  "width": 1872,
+  "height": 1404,
+  "colors": 16,
+  "bit_depth": 4,
+  "png_color_type": 0,
+  "image_size_limit": 750000,
+  "layout_width_css": 1040,
+  "layout_height_css": 780,
+  "native_pixels_per_css_pixel": 1.8,
+  "sources": [
+    "https://trmnl.com/api/models",
+    "https://docs.trmnl.com/go/diy/imagemagick-guide"
+  ]
+}
