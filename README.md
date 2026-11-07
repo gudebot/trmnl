@@ -2,7 +2,7 @@
 
 A portable agent skill for creating artwork **for an exact reserved area** of a TRMNL X display, or explicitly creating a full-screen illustration. It is designed for layouts where the picture shares the screen with existing content such as a quote and weekly dinners.
 
-The root [SKILL.md](SKILL.md) is the agent entry point. Supporting material is in `scripts/`, `references/` and `assets/`. Existing artwork at the repository root is preserved unchanged.
+The root [SKILL.md](SKILL.md) is the agent entry point. Supporting material is in `scripts/`, `references/` and `assets/`. Pictures are grouped by month under `images/YYYY-MM/`; for example, the October 2026 Halloween set is in `images/2026-10/`. Each month folder keeps one file per picture: the 16-gray version the display shows. Colour originals are not committed.
 
 ## What it does
 
@@ -30,8 +30,8 @@ First measure or explicitly choose the art tile's native pixel dimensions. **800
 # use the agent's approved image generator (preferred: GPT-6.1 Sol + OpenAI image generation) to create out/source.png.
 python scripts/trmnl_art.py prompt --brief "two cute cartoon characters sharing a holiday feast" --size 800x1190
 
-# Or prepare one of the existing example images. The original is never overwritten.
-python scripts/trmnl_art.py prepare Cinnamoroll_Halloween.png out/picture.png --size 800x1190
+# Or prepare one of the existing pictures. The file is never overwritten.
+python scripts/trmnl_art.py prepare images/2026-10/cinnamoroll-halloween-gray.png out/picture.png --size 800x1190
 python scripts/trmnl_art.py validate out/picture.png --size 800x1190
 ```
 
