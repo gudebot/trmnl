@@ -3,7 +3,7 @@
 
 The reference is `examples/menu-screen.png`: a real screen as the device displayed it on
 2026-11-04 (quote, weekly dinners and a picture panel), published with its owner's permission.
-The art is the repository's existing `gudetama-halloween-color-gray.png`, converted by
+The art is the repository's existing `images/2026-10/gudetama-halloween-color-gray.png`, converted by
 `trmnl_art.py prepare`; no image service is called. Nothing is uploaded or sent to a device.
 All output paths are exclusive: existing files are never overwritten.
 """
@@ -19,7 +19,7 @@ from trmnl_art import ArtError, prepare, preview
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = ROOT / "examples" / "menu-screen.png"
-SOURCE = ROOT / "gudetama-halloween-color-gray.png"
+SOURCE = ROOT / "images" / "2026-10" / "gudetama-halloween-color-gray.png"
 # Picture panel measured on menu-screen.png: the 4 px grey border runs at x=18-21 and 822-825,
 # y=18-21 and 1212-1215, so the image box inside it is 800x1190 at 22,22. It belongs to that screen
 # (a one-line quote); remeasure for other layouts. See references/targets.md.
