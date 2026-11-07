@@ -307,7 +307,7 @@ class ArtTests(unittest.TestCase):
         self.assertEqual(proof["target"], "full-screen artwork")
 
     def test_existing_repository_artwork_exports_without_modifying_original(self):
-        path = ROOT / "images" / "2026-10" / "Cinnamoroll_Halloween.png"
+        path = ROOT / "images" / "2026-10" / "cinnamoroll-halloween-gray.png"
         before = hashlib.sha256(path.read_bytes()).hexdigest()
         result = art.prepare(path, self.output, (576, 576))
         self.assertEqual(result["status"], "PASS")

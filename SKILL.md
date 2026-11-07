@@ -71,6 +71,6 @@ This box was measured on the example screen; for any other frame, measure its ow
 
 ## 5. Return evidence; keep publication separate
 
-Return the actual artwork, dimensions, byte size, gray/bit-depth validator result, fit/dither choices and any crop/geometry limitations. Distinguish generated art, prepared asset, local composition and physically observed display. Never publish a private reference frame, household content, prompt, report, credential or signed URL. Keep new outputs under ignored `out/` unless the user explicitly approves publishing those exact files.
+Return the actual artwork, dimensions, byte size, gray/bit-depth validator result, fit/dither choices and any crop/geometry limitations. Distinguish generated art, prepared asset, local composition and physically observed display. Never publish a private reference frame, household content, prompt, report, credential or signed URL. Keep new outputs under ignored `out/` unless the user explicitly approves publishing those exact files. When publishing to this repository, commit only the prepared 16-gray file, one per picture, to `images/YYYY-MM/` for the month it is for (for example `images/2026-11/`). Leave the colour original out of the repository.
 
 Device/plugin/playlist changes, merges, skill installation and paid image calls require their own approval. This repository ships no uploader and needs no TRMNL key. Never call the playlist-advancing `/api/display` just to inspect an image. Source/render/fetch timestamps and a physical observation are different evidence.
